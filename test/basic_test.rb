@@ -23,7 +23,7 @@ class BasicTest < Test::Unit::TestCase
         Process.wait
       end
     else
-      Shotgun.start(:port => 3000) do |request, response|
+      Shotgun.start(:port => 3000) do 
         response.content = "Hello from a block"
         response.send_response
       end
@@ -50,7 +50,7 @@ class BasicTest < Test::Unit::TestCase
       end
       
     else
-      Shotgun.start(:port => 3000) do |request, response|
+      Shotgun.start(:port => 3000) do 
         raise "Crap 12334"
       end
     end
