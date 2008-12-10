@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta name="generator" content="Shotgun">
+	<title><%=h @title %></title>
+	<style type="text/css">
+		<%= include 'error.css' %>
+	</style>
+	<!--link rel="stylesheet" type="text/css" href="http://www.modrails.com/error_pages/1.0/error_page.css"-->
+</head>
+
+<body>
+
+	<div id="site_container">
+		<div id="site_header">
+		  <h1><a href="http://simonwex.com/shotgun"><span>Shotgun</span></a></h1>
+		  <h2>Damn. Fast.</h2>
+		</div>
+		<div id="site_body">
+			<%= yield %>
+		</div>
+		<div id="site_footer">
+			<!--
+			   You are free to modify the footer as you see fit,
+			   but we kindly ask of you to preserve to following
+			   text. Thank you.
+			-->
+			<div class="container">
+				Powered by <a href="http://simonwex.com/shotgun">Shotgun</a> &lt; <a href="http://rubyeventmachine.com/">EventMachine</a> &lt; <a href="http://www.ruby-lang.org/">Ruby</a>.
+			</div>
+		</div>
+	</div>
+
+</body>
+</html>
+

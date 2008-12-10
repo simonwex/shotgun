@@ -1,0 +1,7 @@
+require 'rubygems'
+require 'shotgun'
+
+Shotgun.start(:port => 3000) do |request, response|
+  response.content = "<html><body>Hello from a block</body></html>"
+  response.send_response
+end

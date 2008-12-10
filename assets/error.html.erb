@@ -1,0 +1,20 @@
+<% layout 'error_layout', :title => "#{@app_name} application could not be started" do %>
+<h1 class="error_title"><%= @app_name %> Error</h1>
+<div id="content">
+
+	<dl>
+	<dt>Error message:</dt>
+	<dd><%=h @error.message %></dd>
+	
+	<dt>Exception class:</dt>
+	<dd><%=h @error.class %></dd>
+	
+	
+	<dt>Backtrace:</dt>
+	<dd>
+		<%= backtrace_html_for(@error) %>
+	</dd>
+	</dl>
+
+</div>
+<% end %>
