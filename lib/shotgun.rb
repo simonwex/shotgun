@@ -5,10 +5,12 @@ end
 already_retried = false
 begin
   require 'eventmachine' 
+  require "#{File.dirname(__FILE__)}/case_insensitive_hash"
   require 'evma_httpserver'
   require 'time'
   require 'passenger/html_template' unless defined?(HTMLTemplate)
   require 'passenger/platform_info' unless defined?(PlatformInfo)
+  require 'cgi'
 rescue LoadError => load_error
   require 'rubygems'
   $: << passenger_path
@@ -71,7 +73,11 @@ module Shotgun
     port = [options.delete(:port).to_i, options.delete('port').to_i, 80].max
     EventMachine::run do
       EventMachine.epoll
-      EventMachine::start_server(host, port, AnonymousHttpRequestHandler)
+      if socket = options.delete(:socket)
+        EventMachine::start_unix_domain_server(socket, AnonymousHttpRequestHandler)
+      else
+        EventMachine::start_server(host, port, AnonymousHttpRequestHandler)
+      end
       puts "Listening..."
     end
   end
@@ -136,7 +142,7 @@ module Shotgun
       def method
         @handler.http_request_method
       end
-
+      
       def post_content
         @handler.http_post_content
       end
@@ -152,12 +158,21 @@ module Shotgun
           else
             data = @handler.http_query_string
           end
-          pairs = data.map{|pair| pair.split('=').map{|s| CGI.unescape(s)}}
-          pairs.each do |pair|
-            @params[pair[0].to_sym] = pair[1]
+          if data
+
+            pairs = data.map{|pair| pair.split('=').map{|s| CGI.unescape(s)}}
+            pairs.each do |pair|
+              @params[pair[0].to_sym] = pair[1]
+            end
           end
         end
         @params
+      end
+      
+      def headers
+        @headers ||= CaseInsensitiveHash[*@handler.http_headers.split("\000").map do |header|
+          header.split(': ')
+        end.flatten]
       end
     end
     
