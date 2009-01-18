@@ -6,7 +6,7 @@ already_retried = false
 begin
   require 'eventmachine' 
   require "#{File.dirname(__FILE__)}/case_insensitive_hash"
-  require 'evma_httpserver'
+  require 'evma_httpserver' # eventmachine_httpserver gem
   require 'time'
   require 'passenger/html_template' unless defined?(HTMLTemplate)
   require 'passenger/platform_info' unless defined?(PlatformInfo)
@@ -25,6 +25,7 @@ end
 class EventMachine::DelegatedHttpResponse
   alias :send :send_response
 end
+
 
 module Shotgun
   class HTMLTemplate < Passenger::HTMLTemplate
@@ -75,10 +76,13 @@ module Shotgun
       EventMachine.epoll
       if socket = options.delete(:socket)
         EventMachine::start_unix_domain_server(socket, AnonymousHttpRequestHandler)
+        puts "Listening to: #{socket}..."
       else
         EventMachine::start_server(host, port, AnonymousHttpRequestHandler)
+        portstr = port == 80 ? '' : ":#{port}"
+        puts "Listening to: http://#{host}#{portstr}..."
       end
-      puts "Listening..."
+      
     end
   end
   
@@ -214,11 +218,11 @@ module Shotgun
       begin
         handle
       rescue Exception => e
+        puts(e)
+        puts("  #{e.backtrace.join("\n  ")}")
         @response.status = 500
         @response.content = "An error occured\n#{e.message}\n#{e.backtrace.join("\n")}"
         send_error_page('error', :error => e, :app_name => self.class.app_name || self.class.name)
-        puts(e)
-        puts("  #{e.backtrace.join("\n  ")}")
       end
       
     end
@@ -228,6 +232,7 @@ module Shotgun
     	render_error(options)
     end
   end
+  
   class AnonymousHttpRequestHandler < HTTPRequestHandler
     @block
     def self.block=(block)
