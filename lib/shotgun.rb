@@ -88,7 +88,7 @@ module Shotgun
   
   class Logger
     def call(request)
-      (Kernel.const_defined?('LOGOUT') ? LOGOUT : STDOUT).puts("#{request.method} #{request.uri} #{Time.now.httpdate}")
+      (Kernel.const_defined?('LOGOUT') ? LOGOUT : STDOUT).puts("#{request.method} #{request.uri}?#{request.query_string} #{Time.now.httpdate}")
     end
   end
   
@@ -150,23 +150,30 @@ module Shotgun
       def post_content
         @handler.http_post_content
       end
+      
+      def query_string
+        @handler.http_query_string
+      end
 
       def params
         if @params.nil?
           @params = {}
-          data = ''
-          if method == 'POST'
-
-            # TODO: if @handler.http_content_type == 'application/x-www-form-urlencoded'
-            data = @handler.http_post_content.split('&')
-          else
-            data = @handler.http_query_string
+          data = @handler.http_query_string.split('&')
+          
+          if method == 'POST' && @handler.http_content_type == 'application/x-www-form-urlencoded'
+            data += @handler.http_post_content.split('&')
           end
-          if data
 
+          if data
             pairs = data.map{|pair| pair.split('=').map{|s| CGI.unescape(s)}}
+            
             pairs.each do |pair|
-              @params[pair[0].to_sym] = pair[1]
+              key = pair[0].to_sym
+              if @params.has_key?(key)
+                @params[key] = [@params[key], pair[1]].flatten
+              else
+                @params[key] = pair[1]
+              end
             end
           end
         end
