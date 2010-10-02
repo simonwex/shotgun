@@ -8,8 +8,8 @@ begin
   require "#{File.dirname(__FILE__)}/case_insensitive_hash"
   require 'evma_httpserver' # eventmachine_httpserver gem
   require 'time'
-  require 'passenger/html_template' unless defined?(HTMLTemplate)
-  require 'passenger/platform_info' unless defined?(PlatformInfo)
+  require 'phusion_passenger/html_template' unless defined?(HTMLTemplate)
+  require 'phusion_passenger/platform_info' unless defined?(PlatformInfo)
   require 'cgi'
 rescue LoadError => load_error
   require 'rubygems'
@@ -28,7 +28,7 @@ end
 
 
 module Shotgun
-  class HTMLTemplate < Passenger::HTMLTemplate
+  class HTMLTemplate < PhusionPassenger::HTMLTemplate
     
     def initialize(template_path, options = {})
   		@buffer = ''

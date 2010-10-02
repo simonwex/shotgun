@@ -30,9 +30,9 @@ SPEC = Gem::Specification.new do |spec|
   spec.files = FileList['lib/**/*.rb', 'test/**'].to_a + PKG_FILES
   spec.require_paths = ["lib"] 
   spec.bindir = "bin"
-  spec.add_dependency('eventmachine', '>= 0.12.2')
-  spec.add_dependency('em_httpserver', '>= 0.1.0')
-  spec.add_dependency('passenger', '>= 2.0.3')
+  spec.add_dependency('eventmachine', '>= 0.12.10')
+  spec.add_dependency('eventmachine_httpserver', '>= 0.2.0')
+  spec.add_dependency('passenger', '>= 2.2.15')
 end
 
 desc "Does a test run"
